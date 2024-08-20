@@ -73,7 +73,8 @@ enum
     TOKEN_TYPE_COMMENT,
     TOKEN_TYPE_NEWLINE
 };
-enum{
+enum
+{
     NUMBER_TYPE_NORMAL,
     NUMBER_TYPE_LONG,
     NUMBER_TYPE_FLOAT,
@@ -94,9 +95,10 @@ struct token
         unsigned long long llnum;
         void *any;
     };
-    struct token_number{
+    struct token_number
+    {
         int type;
-    }num;
+    } num;
     // True if there's a whitespace in between the current and next token
     bool whitespace;
     // (Hello World) every single token in the paranthesis is going to be pointed at
@@ -122,7 +124,7 @@ struct lex_process
     int current_expression_count;
     struct buffer *parentheses_buffer;
 
-    struct buffer* argument_string_buffer;
+    struct buffer *argument_string_buffer;
     struct lex_process_functions *function;
     // private data that the lexer won't understand
     void *private;
@@ -145,11 +147,12 @@ struct compile_process
         const char *abs_path;
     } cfile; // create cfile variable of this struct
 
-    struct vector* token_vec;
+    struct vector *token_vec;
     FILE *ofile; // cretes an output file
 };
 
-enum{
+enum
+{
     NODE_TYPE_EXPRESSION,
     NODE_TYPE_EXPRESSION_PARANTHESES,
     NODE_TYPE_NUMBER,
@@ -164,15 +167,46 @@ enum{
     NODE_TYPE_STATEMENT_DO_WHILE,
     NODE_TYPE_STATEMENT_FOR,
     NODE_TYPE_STATEMENT_BREAK,
+    NODE_TYPE_STATEMENT_CONTINUE,
+    NODE_TYPE_STATEMENT_SWITCH,
+    NODE_TYPE_STATEMENT_CASE,
+    NODE_TYPE_STATEMENT_DEFAULT,
+    NODE_TYPE_STATEMENT_GOTO,
 
+    NODE_TYPE_UNARY,
+    NODE_TYPE_TENARY,
+    NODE_TYPE_LABEL,
+    NODE_TYPE_STRUCT,
+    NODE_TYPE_UNION,
+    NODE_TYPE_BRACKET,
+    NODE_TYPE_CAST,
+    NODE_TYPE_BLANK
 
 };
 
-struct node{
-    int type; //function, number etc
+struct node
+{
+    int type; // function, number etc
     int flags;
 
-    struct pos pos; //col and line
+    struct pos pos; // col and line
+
+    struct node_binded
+    {
+        // pointer to our body node
+        struct node *owner;
+        // Pointer to the function this node is in
+        struct node *function;
+    } binded;
+
+    union
+    {
+        char cval;
+        const char *sval;
+        unsigned int inum;
+        unsigned long lnum;
+        unsigned long long llnum;
+    };
 };
 
 int compile_file(const char *filename, const char *out_filename, int flags);
@@ -190,7 +224,7 @@ void lex_process_free(struct lex_process *process);
 void *lex_process_private(struct lex_process *process);
 struct vector *lex_process_tokens(struct lex_process *process);
 int lex(struct lex_process *process);
-//builds tokens for the input string
+// builds tokens for the input string
 struct lex_process *tokens_build_for_string(struct compile_process *compiler, const char *str);
 bool token_is_keyword(struct token *token, const char *value);
 #endif

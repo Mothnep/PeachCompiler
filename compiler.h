@@ -277,6 +277,12 @@ struct datatype
     };
 
 };
+enum
+{
+    DATA_TYPE_EXPECT_PRIMITIVE,
+    DATA_TYPE_EXPECT_UNION,
+    DATA_TYPE_EXPECT_STRUCT
+};
 
 int compile_file(const char *filename, const char *out_filename, int flags);
 struct compile_process *compile_process_create(const char *filename, const char *filename_out, int flags);
@@ -302,6 +308,9 @@ bool token_is_keyword(struct token *token, const char *value);
 bool token_is_nl_or_comment_or_newline_seperator(struct token *token);
 bool token_is_symbol(struct token* token, char c);
 bool keyword_is_datatype(const char *str);
+bool token_is_primitive_keyword(struct token* token);
+bool datatype_is_struct_or_union_for_name(const char* name);
+bool token_is_operator(struct token* token, const char* val);
 
 struct node* node_create(struct node* _node);
 void make_exp_node(struct node* left_node, struct node* right_node, const char* op);
